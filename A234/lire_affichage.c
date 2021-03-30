@@ -22,8 +22,9 @@ void afficher_arbre (Arbre234 a, int niveau)
   
   if (a != NULL)
       {
-	if (a->t == 0)
-	  return ;
+	if (a->t == 0) {
+		return;
+	}
 
 	if (a->t == 2)
 	  {
