@@ -11,7 +11,7 @@
 
 
 
-// FONCTION GENERAL :
+// FONCTIONS GENERALES :
 #define max(a,b) ((a)>(b)?(a):(b))
 #define nb_cles(a) (a->t-1)
 #define derniere_cles(a) (a->t-2)
@@ -23,8 +23,8 @@
 
 // <--------------------------------->
 /* 
- * Précondition : a est NULL OU pointe sur un structure Arbre234 et pas une adresse qui correspond pas à une structure Arbre234
- * Sortie : Affiche les specs d'un noeud de manière formaté
+ * Précondition : a est NULL ou point sur un structure noeud234 valide. a ne doit pas être l'adresse d'une structure autre que noeud234.
+ * Sortie : Affiche les spécifications (2 noeuds 3 noeuds 4 noeuds) d'un noeud de manière formaté
  */
 void afficher_noeud(Arbre234 a) {
   if(a == NULL)
@@ -41,7 +41,7 @@ void afficher_noeud(Arbre234 a) {
 }
 // <--------------------------------->
 /* 
- * Précondition : a est NULL OU pointe sur un structure Arbre234 et pas une adresse qui correspond pas à une structure Arbre234
+ * Précondition : a est NULL ou point sur un structure noeud234 valide. a ne doit pas être l'adresse d'une structure autre que noeud234.
  * Sortie : renvoi la hauteur de l'arbre
  */
 int hauteur (Arbre234 a) {
@@ -57,9 +57,9 @@ int hauteur (Arbre234 a) {
 } 
 // <--------------------------------->
 /* 
- * Précondition : a est NULL OU pointe sur un structure Arbre234 et pas une adresse qui correspond pas à une structure Arbre234
+ * Précondition : a est NULL ou point sur un structure noeud234 valide. a ne doit pas être l'adresse d'une structure autre que noeud234.
  * Sortie : renvoi 1 si :
- * - tout les fils d'un noeud sur des 0noeud.
+ * - tous les fils d'un noeud sont des 0noeud.
  * - a == NULL
  * - a est un 0noeud
  */
@@ -79,14 +79,14 @@ int dernier_noeud(Arbre234 a) {
         || (a->t == 3 && a->fils[0]->t == 0 && a->fils[1]->t == 0 && a->fils[2]->t == 0)
         || (a->t == 4 && a->fils[0]->t == 0 && a->fils[1]->t == 0 && a->fils[2]->t == 0 && a->fils[3]->t == 0);
 }
-// FIN FONCTION GENERAL
+// FIN FONCTIONS GENERALES
 
 
 
 // POUR NOEUD_MAX :
 // <--------------------------------->
 /* 
- * Précondition : a est NULL OU pointe sur un structure Arbre234 et pas une adresse qui correspond pas à une structure Arbre234
+ * Précondition : a est NULL ou point sur un structure noeud234 valide. a ne doit pas être l'adresse d'une structure autre que noeud234.
  * Sortie : la somme des clés du noeud donné
  */
 int sum_cles(Arbre234 a) {
@@ -208,9 +208,9 @@ void fusion(Arbre234 a) {
 // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 // <--------------------------------->
 /* 
- * Précondition : a est NULL OU pointe sur un structure Arbre234 et pas une adresse qui correspond pas à une structure Arbre234
- * Sortie : nombre de clé total dans l'arbre. Si racine vide ou feuille -> return 0
- * Comment : Fonction récursive postfixe, Parcours en profondeur de tout l'arbre. Condition d'arret : a == NULL ou a est une feuille cad un noeud avec 0 clé.
+ * Précondition :  a est NULL ou point sur un structure noeud234 valide. a ne doit pas être l'adresse d'une structure autre que noeud234.
+ * Sortie : nombre de clés total dans l'arbre. Si racine vide ou feuille -> return 0
+ * Comment : Fonction récursive postfixe, parcours en profondeur de tout l'arbre. Condition d'arret : a == NULL ou a est une feuille, c'est à dire un noeud avec 0 clé.
  * /!\ Cette fonction va dans les feuilles /!\
  * 3 cas :
  * 1 : c'est un 2noeud -> appel recursif sur ses 2 fils aux indices 1 et 2 du array "fils" et on ajout 1 (un 2noeud à 1 clé);
@@ -220,7 +220,7 @@ void fusion(Arbre234 a) {
 int NombreCles (Arbre234 a) {
   if(a == NULL || a->t == 0)
     return 0;
-  if (a->t == 2) // à enlever si on corrige l'implem de ajout-cle et lire_affichage
+  if (a->t == 2) // à enlever si on corrige l'implémentation de ajout-cle et lire_affichage
     return NombreCles(a->fils[1]) + NombreCles(a->fils[2]) + 1;
   int sum = 0;
   for(int i = 0; i < a->t ; i++) {
@@ -230,7 +230,7 @@ int NombreCles (Arbre234 a) {
 }
 // <--------------------------------->
 /*
- * Précondition : a est NULL OU pointe sur un structure Arbre234 et pas une adresse qui correspond pas à une structure Arbre234
+ * Précondition :  a est NULL ou point sur un structure noeud234 valide. a ne doit pas être l'adresse d'une structure autre que noeud234.
  * Sortie : La clé max de tout l'arbre a. Si racine vide ou feuille -> return 0
  * Comment : Fonction récursive de base, on appel recursivement sur le fils "le plus à droite" tant que celui-ci n'est une feuille .
  * Dans ce cas, on retourne la cle la plus à droite de ce dernier noeud.
@@ -238,7 +238,7 @@ int NombreCles (Arbre234 a) {
 int CleMax (Arbre234 a) {
   if(a == NULL || a->t == 0)
     return 0;
-  if (a->t == 2) { // à enlever si on corrige l'implem de ajout-cle et lire_affichage
+  if (a->t == 2) { // à enlever si on corrige l'implémentation de ajout-cle et lire_affichage
     if(a->fils[2]->t != 0)
       return CleMax(a->fils[2]);
     else
@@ -252,7 +252,7 @@ int CleMax (Arbre234 a) {
 }
 // <--------------------------------->
 /*
- * Précondition : a est NULL OU pointe sur un structure Arbre234 et pas une adresse qui correspond pas à une structure Arbre234
+ * Précondition :  a est NULL ou point sur un structure noeud234 valide. a ne doit pas être l'adresse d'une structure autre que noeud234.
  * Sortie : La clé min de tout l'arbre a. Si racine vide ou feuille -> return 0
  * Comment : Fonction récursive de base, on appel recursivement sur le fils "le plus à gauche" tant que celui-ci n'est une feuille .
  * Dans ce cas, on retourne la cle la plus à gauche de ce dernier noeud.
@@ -274,21 +274,21 @@ int CleMin (Arbre234 a) {
 }
 // <--------------------------------->
 /*
- * Précondition : a est NULL OU pointe sur un structure Arbre234 et pas une adresse qui correspond pas à une structure Arbre234
- * Sortie : La noeud contenant la cle , si pas trouvé -> NULL
- * Comment : Fonction non recursive (et oui , surprenant non ? meme si recursive est largement possible voire tout désignée)
+ * Précondition :  a est NULL ou point sur un structure noeud234 valide. a ne doit pas être l'adresse d'une structure autre que noeud234.
+ * Sortie : La noeud contenant la cle , si pas trouvé renvoi NULL
+ * Comment : Fonction non recursive
  * Le principe est le suivant : on cherche la position de la cle parmis les cles du noeud exploré actuellement, avec ça on sait dans quel fils aller ensuite.
- * On s'arrete des quand à atteint le fond de l'arbre (a->t == 0) ou alors lorsqu'on a trouvé la cle
- * Dans le cas d'un 2noeud bah c'est facile : si la cle recherché est plus grande quand la clé du noeud exploré : on explore le fils "à droite" sinon celui "de gauche"
- * Pour un 3 et 4 noeud, on boucle sur les cles, des qu'on trouve une cle du noeud supérieur à celle recherché , on explore le fils "juste à gauche"
- * (cad celui qui contient des clés compris entre la cle du noeud d'avant (itération precedente) et la cle du noeud etudié actuellement).
- * Si aucune des clés du noeud n'est supéreur (aka on a atteint la dernière cle dans succés (i == derniere_cles(a)), alors on explore le dernier fils ("le plus à droite").
+ * On s'arrête dès qu'on a atteint le fond de l'arbre (a->t == 0) ou alors lorsqu'on a trouvé la cle
+ * Dans le cas d'un 2noeud : si la cle recherchée est plus grande que la clé du noeud exploré : on explore le fils "à droite" sinon celui "de gauche"
+ * Pour un 3 et 4 noeud, on boucle sur les cles, dès qu'on trouve une cle du noeud supérieur à celle recherchée , on explore le fils "juste à gauche"
+ * (c'est à dire celui qui contient des clés comprises entre la cle du noeud d'avant (itération précédente) et la cle du noeud etudié actuellement).
+ * Si aucune des clés du noeud n'est supéreur (on a atteint la dernière cle (i == derniere_cles(a)), alors on explore le dernier fils ("le plus à droite").
  */
 Arbre234 RechercherCle (Arbre234 a, int cle) {
   if(a == NULL)
     return NULL;
   while(a->t != 0) {
-    if(a->t == 2) { // à enlever si on corrige l'implem de ajout-cle et lire_affichage
+    if(a->t == 2) { // à enlever si on corrige l'implémentation de ajout-cle et lire_affichage
       if(a->cles[1] == cle) {
         return a;
       } else if (cle < a->cles[1]) {
@@ -313,10 +313,17 @@ Arbre234 RechercherCle (Arbre234 a, int cle) {
 }
 // <--------------------------------->
 /*
+<<<<<<< HEAD
  * Précondition : a est NULL OU pointe sur un structure Arbre234 et pas une adresse qui correspond pas à une structure Arbre234
  * Sortie : R mais modifie les valeur pointé par feuille, noeud2, noeud3 et noeud4
  * Comment : Vraiment besoin d'expliqué ? Fonction recursive préfixe. Parcours en profondeur de tout l'arbre. Condition d'arret : a est NULL ou a pointe sur une feuille
  * On incremente les valeurs en fonction des specification du noeud exploré.
+=======
+ * Précondition :  a est NULL ou point sur un structure noeud234 valide. a ne doit pas être l'adresse d'une structure autre que noeud234.
+ * Sortie : Ne renvoi rien mais modifie les valeur pointées par feuille, noeud2, noeud3 et noeud4
+ * Comment : Fonction recursive préfixe. Parcours en profondeur de tout l'arbre. Condition d'arret : a est NULL ou a pointe sur une feuille
+ * On incremente les valeurs en fonction des spécification du noeud.
+>>>>>>> 430db8a97436e316609a7be8ffacf93dfd315b93
  */
 void AnalyseStructureArbre (Arbre234 a, int *feuilles, int *noeud2, int *noeud3, int *noeud4) { // # invitation recursive 
   if(a == NULL)
@@ -325,7 +332,7 @@ void AnalyseStructureArbre (Arbre234 a, int *feuilles, int *noeud2, int *noeud3,
     *feuilles +=1;
     return;
   }
-  if(a->t == 2) { // à enlever si on corrige l'implem de ajout-cle et lire_affichage
+  if(a->t == 2) { // à enlever si on corrige l'implémentation de ajout-cle et lire_affichage
     *noeud2 += 1;
     AnalyseStructureArbre(a->fils[1],feuilles,noeud2,noeud3,noeud4);
     AnalyseStructureArbre(a->fils[2],feuilles,noeud2,noeud3,noeud4);
@@ -340,10 +347,10 @@ void AnalyseStructureArbre (Arbre234 a, int *feuilles, int *noeud2, int *noeud3,
 }
 // <--------------------------------->
 /*
- * Précondition : a est NULL OU pointe sur un structure Arbre234 et pas une adresse qui correspond pas à une structure Arbre234
+ * Précondition :  a est NULL ou point sur un structure noeud234 valide. a ne doit pas être l'adresse d'une structure autre que noeud234.
  * Sortie : noeud avec la somme des cles la plus grande de tout l'arbre.
  * Comment : Fonction recursive postfix. Parcours en profondeur de tout l'arbre. Condition d'arret : a est NULL ou a pointe sur une feuille ou tout les fils du noeud sont des feuilles.
- * On cherche le noeud_max de chacun des fils puis on regarde lequel à la somme de ses clés la plus grande et on le retourne. Voila
+ * On cherche le noeud_max de chacun des fils puis on regarde lequel à la somme de ses clés la plus grande et on le retourne.
  * PS : Le array tmp sert juste à enregister le noeud de chacun des fils pour les traiter ensuite.
  */
 Arbre234 noeud_max (Arbre234 a) {
@@ -352,7 +359,7 @@ Arbre234 noeud_max (Arbre234 a) {
   if(dernier_noeud(a))
     return a;
   Arbre234 tmp[4], max;
-  if(a->t == 2) { // à enlever si on corrige l'implem de ajout-cle et lire_affichage
+  if(a->t == 2) { // à enlever si on corrige l'implémentation de ajout-cle et lire_affichage
     tmp[0] = noeud_max(a->fils[1]);
     tmp[1] = noeud_max(a->fils[2]);
     if(sum_cles(tmp[0]) < sum_cles(tmp[1]))
@@ -372,10 +379,10 @@ Arbre234 noeud_max (Arbre234 a) {
 }
 // <--------------------------------->
 /*
- * Précondition : a est NULL OU pointe sur un structure Arbre234 et pas une adresse qui correspond pas à une structure Arbre234
+ * Précondition :  a est NULL ou point sur un structure noeud234 valide. a ne doit pas être l'adresse d'une structure autre que noeud234.
  * Sortie : noeud avec la somme des cles la plus grande de tout l'arbre.
- * Comment : Fonction non récursive.
- * Principe : Double pile pour repéré les changement de niveaux/profondeur
+ * Comment : Fonction itérative.
+ * Principe : Onutilise deux piles pour repéré les changement de niveaux/profondeur
  */
 void Afficher_Cles_Largeur (Arbre234 a) {
   if(a == NULL || a->t == 0) {printf("\n"); return ;}
@@ -386,7 +393,7 @@ void Afficher_Cles_Largeur (Arbre234 a) {
   while(!pile_vide(pile[ipile])) {
     while(!pile_vide(pile[ipile])) {
       tmp = depiler(pile[ipile]);
-      if(tmp->t == 2) { // à enlever si on corrige l'implem de ajout-cle et lire_affichage
+      if(tmp->t == 2) { // à enlever si on corrige l'implémentation de ajout-cle et lire_affichage
         if(tmp->fils[1] != NULL && tmp->fils[1]->t != 0)
           empiler(pile[!ipile],tmp->fils[1]);
         if(tmp->fils[2] != NULL && tmp->fils[2]->t != 0)
@@ -412,12 +419,11 @@ void Afficher_Cles_Largeur (Arbre234 a) {
 }
 // <--------------------------------->
 /*
- * Précondition : a est NULL OU pointe sur un structure Arbre234 et pas une adresse qui correspond pas à une structure Arbre234
+ * Précondition :  a est NULL ou point sur un structure noeud234 valide. a ne doit pas être l'adresse d'une structure autre que noeud234.
  * Sortie : noeud avec la somme des cles la plus grande de tout l'arbre.
  * Comment : Fonction recursive infixe. Parcours en profondeur de tout l'arbre. Condition d'arret : a est NULL ou a pointe sur une feuille.
- * Voila , y'a vraiment besoin d'expliquer ?
- * Ah , peut-être que l'on imprime une cle entre 2 exploration de fils.
- * ah et aussi : pour les 3 et 4noeud, on boucle sur les cles. Voila voila.
+ * On imprime une cle entre 2 explorations de fils.
+ * Pour les 3noeud et 4noeud : on boucle sur les cles.
  */
 void Affichage_Cles_Triees_Recursive (Arbre234 a) {
   if(a == NULL || a->t == 0)
@@ -438,12 +444,11 @@ void Affichage_Cles_Triees_Recursive (Arbre234 a) {
 }
 // <--------------------------------->
 /*
- * Précondition : a est NULL OU pointe sur un structure Arbre234 et pas une adresse qui correspond pas à une structure Arbre234
+ * Précondition :  a est NULL ou point sur un structure noeud234 valide. a ne doit pas être l'adresse d'une structure autre que noeud234.
  * Sortie : noeud avec la somme des cles la plus grande de tout l'arbre.
- * Comment : Fonction non récursice grrr (sans blague). Complexification inutile de Affichage_Cles_Triees_Recursive pour faire la même chose.
- * L'idée est de se servir d'une pile comme stack comme en ALM.
- * Ainsi à tout moment, la tete de pile contient le noeud parent du noeud actuel.
- * En vrai, c'est compliqué demande moi martin.
+ * Comment : Fonction itérative.
+ * L'idée est de se servir d'une pile comme stack.
+ * A tout moment, la tête de pile contient le noeud parent du noeud actuel.
  */
 void Affichage_Cles_Triees_NonRecursive (Arbre234 a) {
   if(a == NULL || a->t == 0)
