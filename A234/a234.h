@@ -21,4 +21,6 @@ void afficher_arbre (Arbre234 a, int niveau) ;
 
 void ajouter_cle (Arbre234 *a, int cle, int niveau, Arbre234 pere) ;
 
+pnoeud234 allouer_noeud () ;
+
   
