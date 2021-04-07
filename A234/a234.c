@@ -19,7 +19,7 @@
 
 #define init2noeud(a,cle,fils1,fils2) a->t=2;a->cles[1]=cle;a->fils[1]=fils1;a->fils[2]=fils2;
 #define init3noeud(a,cle1,cle2,fils1,fils2,fils3) a->t=3;a->cles[0]=cle1;a->cles[1]=cle2;a->fils[0]=fils1;a->fils[1]=fils2;a->fils[2]=fils3;
-#define init4noeud(a,cle1,cle2,cle3,fils1,fils2,fils3,fils4) a->t=3;a->cles[0]=cle1;a->cles[1]=cle2;a->cles[2]=cle3;a->fils[0]=fils1;a->fils[1]=fils2;a->fils[2]=fils3;a->fils[3]=fils4;
+#define init4noeud(a,cle1,cle2,cle3,fils1,fils2,fils3,fils4) a->t=4;a->cles[0]=cle1;a->cles[1]=cle2;a->cles[2]=cle3;a->fils[0]=fils1;a->fils[1]=fils2;a->fils[2]=fils3;a->fils[3]=fils4;
 
 // <--------------------------------->
 /* 
@@ -42,7 +42,7 @@ void afficher_noeud(Arbre234 a) {
 // <--------------------------------->
 /* 
  * Précondition : a est NULL ou point sur un structure noeud234 valide. a ne doit pas être l'adresse d'une structure autre que noeud234.
- * Sortie : renvoi la hauteur de l'arbre
+ * Sortie : Retourne la hauteur de l'arbre
  */
 int hauteur (Arbre234 a) {
   if (a == NULL)
@@ -87,7 +87,7 @@ int dernier_noeud(Arbre234 a) {
 // <--------------------------------->
 /* 
  * Précondition : a est NULL ou point sur un structure noeud234 valide. a ne doit pas être l'adresse d'une structure autre que noeud234.
- * Sortie : la somme des clés du noeud donné
+ * Sortie : Retourne la somme des clés du noeud donné.
  */
 int sum_cles(Arbre234 a) {
   if(a == NULL || a->t == 0)
@@ -120,86 +120,116 @@ pelem elem_allouer() {
 
 
 // POUR DETRUIRE CLE :
-Arbre234 noeud_parent(Arbre234 a, Arbre234 filston) { // précondition : filston appartient à a !
-  if(a == NULL || filston == NULL || a->t == 0 || filston->t == 0)
-    return NULL;
-  if(a == filston)
-    return filston;
-  while(a->t != 0) {
-    if(a->t == 2) { // à enlever si on corrige l'implem de ajout-cle et lire_affichage
-      if(a->fils[1] == filston || a->fils[2] == filston) {
-        return a;
-      } else if (filston->cles[1] < a->cles[1]) {
-        a = a->fils[1];
-      } else {
-        a = a->fils[2];
-      }
-    } else {
-      for(int i = 0 ; i < nb_cles(a) ; i ++) {
-        if(a->fils[i] == filston) {
-          return a;
-        } else if (filston->cles[1] < a->cles[i]) {
-          a = a->fils[i];
-          break;
-        } else if (i == derniere_cles(a)) {
-          a = a->fils[derniere_noeud(a)];
-        }
-      }
-    }
-  }
-  return NULL ;
-}
-
-int ou_est_ma_cle(Arbre234 a, int cle) { // Précondition : 
+void fusion(Arbre234 a, int ifils) {
   if(a == NULL || a->t == 0)
-    return -1;
-  if(a->t > 2) {
-    for(int i = 0 ; i < nb_cles(a); i++) {
-      if(a->cles[i] == cle)
-        return i;
-    }
-    return -1;
-  }
-  if (a->cles[1] != cle)
-    return -1;
-  return 1;
-}
-
-int ou_est_mon_fils(Arbre234 a, Arbre234 filston) { // Précondition : 
-  if(a == NULL || a->t == 0)
-    return -1;
-  if(a->t > 2) {
-    for(int i = 0 ; i < a->t; i++) {
-      if(a->fils[i] == filston)
-        return i;
-    }
-  } else {
-    if(a->fils[1] == filston)
-        return 1;
-    if(a->fils[2] == filston)
-        return 2;
-  }
-  return -1;
-}
-
-void fusion(Arbre234 a) {
-  if(a == NULL && a->t != 2 && a->fils[1]->t != 2 && a->fils[2]->t != 2)
     return;
-  Arbre234 tmp;
-  a->cles[0] = a->fils[1]->cles[1];
-  a->cles[2] = a->fils[2]->cles[1];
+  Arbre234 g = a->fils[ifils],d = a->fils[ifils+1],tmp;
+  tmp = a->t == 2 ? a : g;
+  tmp->cles[0] = g->cles[1];
+  tmp->cles[1] = a->cles[ifils];
+  tmp->cles[2] = d->cles[1];
+  tmp->fils[0] = g->fils[1];
+  tmp->fils[1] = g->fils[2];
+  tmp->fils[2] = d->fils[1];
+  tmp->fils[3] = d->fils[2];
+  switch (a->t) {
+  case 2:
+    a->t = 4;
+    free(g);
+    break;
+  case 3:
+        g->t = 4;
+    switch (ifils)
+    {
+    case 1:
+      a->cles[1] = a->cles[0];
+      a->fils[2] = a->fils[1];
+      a->fils[2]->t = a->fils[1]->t;
+    case 0:
+      a->fils[1] = a->fils[0];
+      a->fils[1]->t = a->fils[0]->t;
+      break;
+    default:
+      break;
+    }
+    a->t--;
+    break;
+  case 4:
+    g->t = 4;
+    switch (ifils) {
+    case 0:
+      a->fils[1] = a->fils[2];
+      a->fils[1]->t = a->fils[2]->t;
+      a->cles[0] = a->cles[1];
+    case 1:
+      a->cles[1] = a->cles[2];
+      a->fils[2] = a->fils[3];
+      a->fils[2]->t = a->fils[3]->t;
+      break;
+    default:
+      break;
+    }
+    a->t--;
+    break;
+  default:
+    break;
+  }
+  free(d);
+}
 
-  a->fils[0] = a->fils[1]->fils[1];
+void miseaupropre(Arbre234 a) {
+  if (a != NULL && a->t != 0) {
+    for(int i = 0 ; i < 4 ; i++)
+      miseaupropre(a->fils[i]);
+    if (a->t == 2 && a->fils[1]->t == 2 && a->fils[2]->t == 2)
+      fusion(a, 1);
+    else if (a->t > 2) 
+      for (int i = 0; i < a->t-1; i++)
+        if (a->fils[i]->t == 2 && a->fils[i+1]->t == 2)
+          fusion(a, i);
+  }
+}
 
-  tmp = a->fils[1];
-  a->fils[1] = tmp->fils[2];
-  free(tmp);
+void rotation_droite(Arbre234 a, int ifils) {
+  if(a == NULL || a->t == 0)
+    return;
+  Arbre234 g = a->fils[ifils-1],d = a->fils[ifils];
+  for (int j = d->t; j>1; j--) {
+    d->cles[j] = d->cles[j-1];
+    d->fils[j+1] = d->fils[j];
+  }
+  d->fils[1] = d->fils[0];
+  d->cles[0] = a->cles[ifils-1];
+  a->cles[ifils-1] = g->cles[g->t];
+  d->fils[0] = g->fils[g->t+1];
+  (d->t)++;
+  (g->t)--;
+}
 
-  a->fils[3] = a->fils[2]->fils[2];
-
-  tmp = a->fils[2];
-  a->fils[2] = tmp->fils[1];
-  free(tmp);
+void rotation_gauche(Arbre234 a, int ifils) {
+  if(a == NULL || a->t == 0)
+    return;
+  Arbre234 g = a->fils[ifils] ,d = a->fils[ifils+1];
+  (g->t)++; (d->t)--;
+  if (g->t == 3) {
+    g->cles[0] = g->cles[1];
+    g->cles[1] = a->cles[ifils];
+    g->fils[0] = g->fils[1];
+    g->fils[1] = g->fils[2];
+    g->fils[2] = d->fils[0];
+  } else {
+    g->cles[2] = a->cles[ifils];
+    g->fils[3] = d->fils[0];
+  }
+  a->cles[ifils] = d->cles[0];
+  if (d->t != 2) {
+    d->cles[0] = d->cles[1];
+    d->cles[1] = d->cles[2];
+    for(int i = 0 ; i < 3 ; i++) {
+      d->fils[i] = d->fils[i+1];
+      d->fils[i]->t = d->fils[i+1]->t;
+    }
+  }
 }
 // FIN POUR DETRUIRE CLE
 
@@ -209,11 +239,11 @@ void fusion(Arbre234 a) {
 // <--------------------------------->
 /* 
  * Précondition :  a est NULL ou point sur un structure noeud234 valide. a ne doit pas être l'adresse d'une structure autre que noeud234.
- * Sortie : nombre de clés total dans l'arbre. Si racine vide ou feuille -> return 0
- * Comment : Fonction récursive postfixe, parcours en profondeur de tout l'arbre. Condition d'arret : a == NULL ou a est une feuille, c'est à dire un noeud avec 0 clé.
+ * Sortie : Retourne le nombre de clés total dans l'arbre. Si racine vide ou feuille -> retorune 0
+ * Comment : Fonction récursive postfixe, parcours en profondeur de la totalité de l'arbre. Condition d'arret : a == NULL ou a est une feuille, c'est à dire un noeud avec 0 clé.
  * /!\ Cette fonction va dans les feuilles /!\
  * 3 cas :
- * 1 : c'est un 2noeud -> appel recursif sur ses 2 fils aux indices 1 et 2 du array "fils" et on ajout 1 (un 2noeud à 1 clé);
+ * 1 : c'est un 2noeud -> appel recursif sur ses 2 fils aux indices 1 et 2 du array "fils" et on ajoute 1 (un 2noeud à 1 clé);
  * 2 : c'est un 3 ou 4noeud -> appel recursif sur leur fils qui sont cette fois-ci rangé dans l'ordre dans l'array "fils" donc on boucle simplement sur les fils
  * 3 : c'est un 0noeud , une feuille sans clé -> pas de clé? return 0
  */
@@ -281,8 +311,8 @@ int CleMin (Arbre234 a) {
  * On s'arrête dès qu'on a atteint le fond de l'arbre (a->t == 0) ou alors lorsqu'on a trouvé la cle
  * Dans le cas d'un 2noeud : si la cle recherchée est plus grande que la clé du noeud exploré : on explore le fils "à droite" sinon celui "de gauche"
  * Pour un 3 et 4 noeud, on boucle sur les cles, dès qu'on trouve une cle du noeud supérieur à celle recherchée , on explore le fils "juste à gauche"
- * (c'est à dire celui qui contient des clés comprises entre la cle du noeud d'avant (itération précédente) et la cle du noeud etudié actuellement).
- * Si aucune des clés du noeud n'est supéreur (on a atteint la dernière cle (i == derniere_cles(a)), alors on explore le dernier fils ("le plus à droite").
+ * (c'est à dire celui qui contient des clés comprises entre la cle d'avant du noeud (itération précédente) et la cle du noeud etudié actuellement).
+ * Si aucune des clés du noeud n'est supérieur (on a atteint la dernière cle (i == derniere_cles(a)), alors on explore le dernier fils ("le plus à droite").
  */
 Arbre234 RechercherCle (Arbre234 a, int cle) {
   if(a == NULL)
@@ -313,17 +343,10 @@ Arbre234 RechercherCle (Arbre234 a, int cle) {
 }
 // <--------------------------------->
 /*
-<<<<<<< HEAD
  * Précondition : a est NULL OU pointe sur un structure Arbre234 et pas une adresse qui correspond pas à une structure Arbre234
- * Sortie : R mais modifie les valeur pointé par feuille, noeud2, noeud3 et noeud4
- * Comment : Vraiment besoin d'expliqué ? Fonction recursive préfixe. Parcours en profondeur de tout l'arbre. Condition d'arret : a est NULL ou a pointe sur une feuille
- * On incremente les valeurs en fonction des specification du noeud exploré.
-=======
- * Précondition :  a est NULL ou point sur un structure noeud234 valide. a ne doit pas être l'adresse d'une structure autre que noeud234.
- * Sortie : Ne renvoi rien mais modifie les valeur pointées par feuille, noeud2, noeud3 et noeud4
- * Comment : Fonction recursive préfixe. Parcours en profondeur de tout l'arbre. Condition d'arret : a est NULL ou a pointe sur une feuille
- * On incremente les valeurs en fonction des spécification du noeud.
->>>>>>> 430db8a97436e316609a7be8ffacf93dfd315b93
+ * Sortie : Rien n'est retourné mais modifie les variables pointées par feuille, noeud2, noeud3 et noeud4
+ * Comment : Fonction recursive préfixe. Parcours en profondeur de la totalité de l'arbre. Condition d'arret : a est NULL ou a pointe sur une feuille
+ * On incremente les valeurs en fonction des specifications du noeud exploré.
  */
 void AnalyseStructureArbre (Arbre234 a, int *feuilles, int *noeud2, int *noeud3, int *noeud4) { // # invitation recursive 
   if(a == NULL)
@@ -348,10 +371,10 @@ void AnalyseStructureArbre (Arbre234 a, int *feuilles, int *noeud2, int *noeud3,
 // <--------------------------------->
 /*
  * Précondition :  a est NULL ou point sur un structure noeud234 valide. a ne doit pas être l'adresse d'une structure autre que noeud234.
- * Sortie : noeud avec la somme des cles la plus grande de tout l'arbre.
+ * Sortie : Retourne noeud avec la somme des cles la plus grande de tout l'arbre.
  * Comment : Fonction recursive postfix. Parcours en profondeur de tout l'arbre. Condition d'arret : a est NULL ou a pointe sur une feuille ou tout les fils du noeud sont des feuilles.
  * On cherche le noeud_max de chacun des fils puis on regarde lequel à la somme de ses clés la plus grande et on le retourne.
- * PS : Le array tmp sert juste à enregister le noeud de chacun des fils pour les traiter ensuite.
+ * PS : Le array tmp sert juste à enregister le noeud max de chacun des fils pour les traiter ensuite.
  */
 Arbre234 noeud_max (Arbre234 a) {
   if(a == NULL || a->t == 0)
@@ -380,9 +403,9 @@ Arbre234 noeud_max (Arbre234 a) {
 // <--------------------------------->
 /*
  * Précondition :  a est NULL ou point sur un structure noeud234 valide. a ne doit pas être l'adresse d'une structure autre que noeud234.
- * Sortie : noeud avec la somme des cles la plus grande de tout l'arbre.
+ * Sortie : Retourne le noeud avec la somme des cles la plus grande de tout l'arbre.
  * Comment : Fonction itérative.
- * Principe : Onutilise deux piles pour repéré les changement de niveaux/profondeur
+ * Principe : On utilise deux piles pour repéré les changements de niveaux/profondeur
  */
 void Afficher_Cles_Largeur (Arbre234 a) {
   if(a == NULL || a->t == 0) {printf("\n"); return ;}
@@ -420,8 +443,8 @@ void Afficher_Cles_Largeur (Arbre234 a) {
 // <--------------------------------->
 /*
  * Précondition :  a est NULL ou point sur un structure noeud234 valide. a ne doit pas être l'adresse d'une structure autre que noeud234.
- * Sortie : noeud avec la somme des cles la plus grande de tout l'arbre.
- * Comment : Fonction recursive infixe. Parcours en profondeur de tout l'arbre. Condition d'arret : a est NULL ou a pointe sur une feuille.
+ * Sortie : Retourne le noeud avec la somme des cles la plus grande de tout l'arbre.
+ * Comment : Fonction recursive infixe. Parcours en profondeur de la totalité de l'arbre. Condition d'arret : a est NULL ou a pointe sur une feuille.
  * On imprime une cle entre 2 explorations de fils.
  * Pour les 3noeud et 4noeud : on boucle sur les cles.
  */
@@ -445,7 +468,7 @@ void Affichage_Cles_Triees_Recursive (Arbre234 a) {
 // <--------------------------------->
 /*
  * Précondition :  a est NULL ou point sur un structure noeud234 valide. a ne doit pas être l'adresse d'une structure autre que noeud234.
- * Sortie : noeud avec la somme des cles la plus grande de tout l'arbre.
+ * Sortie : Retourne le noeud avec la somme des cles la plus grande de tout l'arbre.
  * Comment : Fonction itérative.
  * L'idée est de se servir d'une pile comme stack.
  * A tout moment, la tête de pile contient le noeud parent du noeud actuel.
@@ -471,7 +494,87 @@ void Affichage_Cles_Triees_NonRecursive (Arbre234 a) {
   }
   detruire_pile(pile);
 }
+// <--------------------------------->
+/*
+ * Précondition :  a est NULL ou point sur un structure noeud234 valide. a ne doit pas être l'adresse d'une structure autre que noeud234.
+ * Sortie : Ne retourne rien mais supprime un clé de l'arbre.
+ * Comment : C'est compliqué.
+ */
+void Detruire_Cle_Recursive(Arbre234 a, int cle) {
+  int ifils = 0;
+  if (a->t == 2)
+    ifils = 1 + (cle > a->cles[1]);
+  else {
+    for (int i = 0; i < a->t-1; i++)
+      if (cle > a->cles[i])
+        ifils++;
+  }
+  if (!(a == NULL || a->fils[1]->t == 0)) {
+    if (a->cles[ifils] == cle) {
+      if (a->fils[ifils]->t > a->fils[ifils+1]->t) {
+        a->cles[ifils] = CleMax(a->fils[ifils]);
+        Detruire_Cle_Recursive(a->fils[ifils],a->cles[ifils]);
+      } else {
+        if (a->fils[ifils+1]->t > 2) { 
+          a->cles[ifils] = CleMin(a->fils[ifils+1]);
+          Detruire_Cle_Recursive(a->fils[ifils+1],a->cles[ifils]);
+        } else {
+          fusion(a, ifils);
+          Detruire_Cle_Recursive(a->fils[ifils],cle);
+        }
+      }
+    } else {
+      if (a->fils[ifils]->t == 2) {
+        if(ifils > 0 && a->fils[ifils-1]->t > 2) {
+          rotation_droite(a, ifils);
+        } else {
+          if (((a->t == 2 && ifils == 1) || (a->t > 2 && ifils < a->t-1)) && (a->fils[ifils+1]->t > 2)) {
+            rotation_gauche(a, ifils);
+          } else {
+            if (ifils > 0 && a->t > 2)
+              ifils--;
+            fusion(a, ifils);
+            Detruire_Cle_Recursive(a->fils[ifils+1],cle);
+            return;
+          }
+        }
+      }
+      Detruire_Cle_Recursive(a->fils[ifils],cle);
+    }
+  } else {
+    switch (a->t) {
+      case 2:
+        a->t = 1;
+        break;
+      case 3:
+        if (ifils == 1)
+          a->cles[1] = a->cles[0];
+        a->t--;
+        break;
+      case 4:
+        if (ifils == 1)
+          a->cles[1] = a->cles[2];
+        else if (ifils == 0) {
+          a->cles[0] = a->cles[1];
+          a->cles[1] = a->cles[2];
+        }
+        a->t--;
+        break;
+      default:
+        break;
+    }
+  }
+}
 
+void Detruire_Cle (Arbre234 *a, int cle)
+{
+  if(a == NULL || *a == NULL || (*a)->t == 0)
+    return;
+  if (RechercherCle(*a, cle) != NULL)
+    Detruire_Cle_Recursive(*a,cle);
+  miseaupropre(*a);
+}
+// <--------------------------------->
 
 int main (int argc, char **argv) {
   Arbre234 a ;
@@ -563,30 +666,16 @@ int main (int argc, char **argv) {
   printf("Affichage_Cles_Triees_NonRecursive(a->fils[2]) : "); Affichage_Cles_Triees_NonRecursive(a->fils[2]); printf("\n");
 
   printf ("\n\n==== Detruire_Cle ====\n") ;
-  //On gérère l'arbre un arbre :
-  Arbre234 tmp[23], racine = tmp[0];
-  for(int i = 0; i < 23 ; i++) {
-    tmp[i] = allouer_noeud();
-  }
-  init2noeud(tmp[0],16,tmp[1],tmp[2]); // P
-  init3noeud(tmp[1],3,8,tmp[3],tmp[4],tmp[5]); // C,H
-  init2noeud(tmp[2],22,tmp[6],tmp[7]); // V
-  init3noeud(tmp[3],1,2,tmp[8],tmp[9],tmp[10]); // A,B
-  init3noeud(tmp[4],5,6,tmp[11],tmp[12],tmp[13]); // E,F
-  init2noeud(tmp[5],14,tmp[14],tmp[15]); // N
-  init3noeud(tmp[6],18,19,tmp[16],tmp[17],tmp[18]); // R,S
-  init4noeud(tmp[7],24,25,26,tmp[19],tmp[20],tmp[21],tmp[22]); // X,Y,Z
 
-  int ordre_destruction[11] = {1,14,8,18,3,16,5,6,22,2,24}; // A,N,H,R,C,P,E,F,V,B,X,
-
+  int ordre_destruction[20] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,17,18,19,20,16};
 
   printf("\nArbre de départ: \n");
-  afficher_arbre (racine, 0) ;
+  afficher_arbre (a, 0) ;
 
-  for(int i = 0 ; i < 11 ; i++) {
-    printf("\nDetruire_cle(%d) (cad %c) :\n",ordre_destruction[i],(char)(ordre_destruction[i]+((int)'A')-1));
-    // Detruire_cle(&racine,ordre_destruction[i]);
-    afficher_arbre (racine, 0) ;
+  for(int i = 0 ; i < 20 ; i++) {
+    printf("\nDetruire_cle(%d) :\n",ordre_destruction[i]);
+    Detruire_Cle(&a,ordre_destruction[i]);
+    afficher_arbre (a, 0) ;
   } 
 
 
